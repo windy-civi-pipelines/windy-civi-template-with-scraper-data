@@ -23,12 +23,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           path: main
 
-      - name: Checkout Formatter Code
-        uses: actions/checkout@v4
-        with:
-          repository: windy-civi/windy-civi-state-template
-          path: formatter
-
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
