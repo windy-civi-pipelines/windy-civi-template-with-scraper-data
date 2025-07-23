@@ -8,8 +8,8 @@ def handle_vote_event(
     content,
     session_name,
     date_folder,
-    output_folder,
-    error_folder,
+    DATA_PROCESSED_FOLDER,
+    DATA_NOT_PROCESSED_FOLDER,
     filename,
 ):
     """
@@ -24,15 +24,15 @@ def handle_vote_event(
     Args:
         content (dict): Parsed JSON vote event.
         session_name (str): Folder name for the legislative session.
-        output_folder (Path): Base path for processed output.
-        error_folder (Path): Base path for logging unprocessable files.
+        DATA_PROCESSED_FOLDER (Path): Base path for processed output.
+        DATA_NOT_PROCESSED_FOLDER (Path): Base path for logging unprocessable files.
         filename (str): Original filename (used in logs).
     """
     referenced_bill_id = content.get("bill_identifier")
     if not referenced_bill_id:
         print("⚠️ Warning: Vote missing bill_identifier")
         record_error_file(
-            error_folder,
+            DATA_NOT_PROCESSED_FOLDER,
             "from_handle_vote_event_missing_bill_identifier",
             filename,
             content,
@@ -40,7 +40,7 @@ def handle_vote_event(
         )
         return False
 
-    save_path = Path(output_folder).joinpath(
+    save_path = Path(DATA_PROCESSED_FOLDER).joinpath(
         f"country:us",
         f"state:{STATE_ABBR}",
         "sessions",
