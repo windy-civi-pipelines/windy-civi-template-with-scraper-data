@@ -40,8 +40,8 @@ def handle_bill(
     content,
     session_name,
     date_folder,
-    output_folder,
-    error_folder,
+    DATA_PROCESSED_FOLDER,
+    DATA_NOT_PROCESSED_FOLDER,
     filename,
 ):
     """
@@ -65,7 +65,7 @@ def handle_bill(
     if not bill_identifier:
         print("⚠️ Warning: Bill missing identifier")
         record_error_file(
-            error_folder,
+            DATA_NOT_PROCESSED_FOLDER,
             "from_handle_bill_missing_identifier",
             filename,
             content,
@@ -73,7 +73,7 @@ def handle_bill(
         )
         return False
 
-    save_path = Path(output_folder).joinpath(
+    save_path = Path(DATA_PROCESSED_FOLDER).joinpath(
         f"country:us",
         f"state:{STATE_ABBR}",
         "sessions",
