@@ -53,9 +53,7 @@ def main(
     DATA_PROCESSED_FOLDER = output_folder / "data_processed"
     DATA_NOT_PROCESSED_FOLDER = output_folder / "data_not_processed"
     EVENT_ARCHIVE_FOLDER = output_folder / "event_archive"
-    BILL_SESSION_MAPPING_FILE = (
-        BASE_FOLDER / "bill_session_mapping" / f"{STATE_ABBR}.json"
-    )
+    BILL_TO_SESSION_FILE = BASE_FOLDER / "bill_session_mapping" / f"{STATE_ABBR}.json"
     SESSION_MAPPING_FILE = BASE_FOLDER / "sessions" / f"{STATE_ABBR}.json"
     SESSION_LOG_PATH = output_folder / "new_sessions_added.txt"
 
@@ -66,7 +64,7 @@ def main(
     DATA_PROCESSED_FOLDER.mkdir(parents=True, exist_ok=True)
     DATA_NOT_PROCESSED_FOLDER.mkdir(parents=True, exist_ok=True)
     EVENT_ARCHIVE_FOLDER.mkdir(parents=True, exist_ok=True)
-    (BILL_SESSION_MAPPING_FILE.parent).mkdir(parents=True, exist_ok=True)
+    (BILL_TO_SESSION_FILE.parent).mkdir(parents=True, exist_ok=True)
     (SESSION_MAPPING_FILE.parent).mkdir(parents=True, exist_ok=True)
 
     # 3. Ensure state specific session mapping is available
@@ -97,7 +95,7 @@ def main(
             EVENT_ARCHIVE_FOLDER,
             DATA_PROCESSED_FOLDER,
             DATA_NOT_PROCESSED_FOLDER,
-            BILL_SESSION_MAPPING_FILE,
+            BILL_TO_SESSION_FILE,
             SESSION_MAPPING_FILE,
         )
     else:
