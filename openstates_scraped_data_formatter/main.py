@@ -15,7 +15,7 @@ SESSION_MAPPING = {}
 
 @click.command()
 @click.option(
-    "--jur",
+    "--state",
     required=True,
     help="Jurisdiction code to process.",
 )
@@ -26,30 +26,16 @@ SESSION_MAPPING = {}
     help="Path to the input folder containing JSON files.",
 )
 @click.option(
-    "--output-folder",
-    type=click.Path(file_okay=False, dir_okay=True, path_type=Path),
-    required=True,
-    help="Path to the output folder.",
-)
-@click.option(
-    "--cache-folder",
-    type=click.Path(file_okay=False, dir_okay=True, path_type=Path),
-    default=mkdtemp(),
-    help="Path to a temporary cache folder.",
-)
-@click.option(
     "--allow-session-fix/--no-allow-session-fix",
     default=True,
     help="Allow interactive session fixes when session names are missing.",
 )
 def main(
-    jur: str,
+    state: str,
     input_folder: Path,
-    output_folder: Path,
-    cache_folder: Path,
     allow_session_fix: bool,
 ):
-    STATE_ABBR = jur
+    STATE_ABBR = state.lower()
     DATA_OUTPUT = BASE_FOLDER / "data_output" / STATE_ABBR
     DATA_PROCESSED_FOLDER = DATA_OUTPUT / "data_processed"
     DATA_NOT_PROCESSED_FOLDER = DATA_OUTPUT / "data_not_processed"
@@ -58,7 +44,6 @@ def main(
     BILL_TO_SESSION_FILE = BASE_FOLDER / "bill_session_mapping" / f"{STATE_ABBR}.json"
     # Maps dates to session names and folders
     # e.g. "113": {"name": "113th Congress", "date_folder": "2013-2015"}
-
     SESSION_MAPPING_FILE = BASE_FOLDER / "sessions" / f"{STATE_ABBR}.json"
     SESSION_LOG_PATH = DATA_OUTPUT / "new_sessions_added.txt"
 
@@ -66,7 +51,6 @@ def main(
     clear_DATA_OUTPUT_FOLDER(DATA_OUTPUT)
 
     # 2. Ensure output folders exist
-    EVENT_ARCHIVE_FOLDER.mkdir(parents=True, exist_ok=True)
     DATA_PROCESSED_FOLDER.mkdir(parents=True, exist_ok=True)
     DATA_NOT_PROCESSED_FOLDER.mkdir(parents=True, exist_ok=True)
     EVENT_ARCHIVE_FOLDER.mkdir(parents=True, exist_ok=True)
