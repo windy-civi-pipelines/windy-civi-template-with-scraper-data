@@ -50,17 +50,23 @@ def main(
     allow_session_fix: bool,
 ):
     STATE_ABBR = jur
-    DATA_PROCESSED_FOLDER = output_folder / "data_processed"
-    DATA_NOT_PROCESSED_FOLDER = output_folder / "data_not_processed"
-    EVENT_ARCHIVE_FOLDER = output_folder / "event_archive"
+    DATA_OUTPUT = BASE_FOLDER / "data_output" / STATE_ABBR
+    DATA_PROCESSED_FOLDER = DATA_OUTPUT / "data_processed"
+    DATA_NOT_PROCESSED_FOLDER = DATA_OUTPUT / "data_not_processed"
+    EVENT_ARCHIVE_FOLDER = DATA_OUTPUT / "event_archive"
+    # Created to map bills with no session metadata
     BILL_TO_SESSION_FILE = BASE_FOLDER / "bill_session_mapping" / f"{STATE_ABBR}.json"
+    # Maps dates to session names and folders
+    # e.g. "113": {"name": "113th Congress", "date_folder": "2013-2015"}
+
     SESSION_MAPPING_FILE = BASE_FOLDER / "sessions" / f"{STATE_ABBR}.json"
-    SESSION_LOG_PATH = output_folder / "new_sessions_added.txt"
+    SESSION_LOG_PATH = DATA_OUTPUT / "new_sessions_added.txt"
 
     # 1. Clean previous outputs
-    clear_DATA_OUTPUT_FOLDER(output_folder)
+    clear_DATA_OUTPUT_FOLDER(DATA_OUTPUT)
 
     # 2. Ensure output folders exist
+    EVENT_ARCHIVE_FOLDER.mkdir(parents=True, exist_ok=True)
     DATA_PROCESSED_FOLDER.mkdir(parents=True, exist_ok=True)
     DATA_NOT_PROCESSED_FOLDER.mkdir(parents=True, exist_ok=True)
     EVENT_ARCHIVE_FOLDER.mkdir(parents=True, exist_ok=True)
@@ -68,8 +74,9 @@ def main(
     (SESSION_MAPPING_FILE.parent).mkdir(parents=True, exist_ok=True)
 
     # 3. Ensure state specific session mapping is available
+
     SESSION_MAPPING.update(
-        ensure_session_mapping(STATE_ABBR, cache_folder, input_folder)
+        ensure_session_mapping(STATE_ABBR, BASE_FOLDER, input_folder)
     )
 
     # 4. Load and parse all input JSON files
