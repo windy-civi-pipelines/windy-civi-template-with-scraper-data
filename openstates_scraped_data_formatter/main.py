@@ -9,7 +9,7 @@ from utils.process_utils import process_and_save
 from postprocessors.event_bill_linker import link_events_to_bills_pipeline
 
 # Define state abbreviation and paths
-BASE_FOLDER = Path(__file__).parent
+BASE_FOLDER = Path(__file__).parent.parent
 SESSION_MAPPING = {}
 
 
@@ -36,7 +36,7 @@ def main(
     allow_session_fix: bool,
 ):
     STATE_ABBR = state.lower()
-    DATA_OUTPUT = BASE_FOLDER / "data_output" / STATE_ABBR
+    DATA_OUTPUT = BASE_FOLDER / "data_output"
     DATA_PROCESSED_FOLDER = DATA_OUTPUT / "data_processed"
     DATA_NOT_PROCESSED_FOLDER = DATA_OUTPUT / "data_not_processed"
     EVENT_ARCHIVE_FOLDER = DATA_OUTPUT / "event_archive"
