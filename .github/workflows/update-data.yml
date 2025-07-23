@@ -62,8 +62,8 @@ jobs:
         run: |
           pip install pipenv
           pipenv install
-          pipenv run python main.py --jur $STATE --input-folder $FORMATTER_INPUT_FOLDER --output-folder ${{ runner.temp }}/_out
-          cd ${{ runner.temp }}/_out/data_processed
+          pipenv run python main.py --state $STATE --input-folder $FORMATTER_INPUT_FOLDER
+          cd openstates_scraped_data_formatter/data_output/data_processed || exit 1
           tar zcvf ${{ runner.temp }}/snapshot-${{ steps.get-date.outputs.date }}.tgz country:us
 
       - name: Update Repo
