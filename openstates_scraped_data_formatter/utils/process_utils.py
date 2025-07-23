@@ -15,7 +15,12 @@ def count_successful_saves(files, handler_function):
 
 
 def route_handler(
-    STATE_ABBR, filename, content, session_metadata, ERROR_FOLDER, OUTPUT_FOLDER
+    STATE_ABBR,
+    filename,
+    content,
+    session_metadata,
+    DATA_NOT_PROCESSED_FOLDER,
+    DATA_PROCESSED_FOLDER,
 ):
     session_name = session_metadata["name"]
     date_folder = session_metadata["date_folder"]
@@ -26,8 +31,8 @@ def route_handler(
             content,
             session_name,
             date_folder,
-            OUTPUT_FOLDER,
-            ERROR_FOLDER,
+            DATA_PROCESSED_FOLDER,
+            DATA_NOT_PROCESSED_FOLDER,
             filename,
         )
         return "bill" if success else None
@@ -38,8 +43,8 @@ def route_handler(
             content,
             session_name,
             date_folder,
-            OUTPUT_FOLDER,
-            ERROR_FOLDER,
+            DATA_PROCESSED_FOLDER,
+            DATA_NOT_PROCESSED_FOLDER,
             filename,
         )
         return "vote_event" if success else None
@@ -50,8 +55,8 @@ def route_handler(
             content,
             session_name,
             date_folder,
-            OUTPUT_FOLDER,
-            ERROR_FOLDER,
+            DATA_PROCESSED_FOLDER,
+            DATA_NOT_PROCESSED_FOLDER,
             filename,
         )
         return "event" if success else None
@@ -62,7 +67,12 @@ def route_handler(
 
 
 def process_and_save(
-    STATE_ABBR, data, ERROR_FOLDER, SESSION_MAPPING, SESSION_LOG_PATH, OUTPUT_FOLDER
+    STATE_ABBR,
+    data,
+    DATA_NOT_PROCESSED_FOLDER,
+    SESSION_MAPPING,
+    SESSION_LOG_PATH,
+    DATA_PROCESSED_FOLDER,
 ):
     bill_count = 0
     event_count = 0
@@ -72,13 +82,18 @@ def process_and_save(
         session = content.get("legislative_session")
         if not session:
             print(f"⚠️ Skipping {filename}, missing legislative_session")
-            record_error_file(ERROR_FOLDER, "missing_session", filename, content)
+            record_error_file(
+                DATA_NOT_PROCESSED_FOLDER, "missing_session", filename, content
+            )
             continue
 
         session_metadata = SESSION_MAPPING.get(session)
 
         # Prompt user to fix if session is unknown: by default is toggled off
-        if not session_metadata and click.get_current_context().params["allow_session_fix"]:
+        if (
+            not session_metadata
+            and click.get_current_context().params["allow_session_fix"]
+        ):
             new_session = prompt_for_session_fix(
                 filename, session, log_path=SESSION_LOG_PATH
             )
@@ -87,11 +102,18 @@ def process_and_save(
                 session_metadata = new_session
 
         if not session_metadata:
-            record_error_file(ERROR_FOLDER, "unknown_session", filename, content)
+            record_error_file(
+                DATA_NOT_PROCESSED_FOLDER, "unknown_session", filename, content
+            )
             continue
 
         result = route_handler(
-            STATE_ABBR, filename, content, session_metadata, ERROR_FOLDER, OUTPUT_FOLDER
+            STATE_ABBR,
+            filename,
+            content,
+            session_metadata,
+            DATA_NOT_PROCESSED_FOLDER,
+            DATA_PROCESSED_FOLDER,
         )
 
         if result == "bill":
