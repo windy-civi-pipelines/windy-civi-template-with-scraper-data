@@ -64,17 +64,13 @@ jobs:
           pipenv install
           pipenv run python main.py --state $STATE --input-folder $FORMATTER_INPUT_FOLDER
           cd ${{ github.workspace }} || exit 1
-          tar zcvf ${{ runner.temp }}/snapshot-${{ steps.get-date.outputs.date }}.tgz data_output bill_session_mapping sessions
 
       - name: Update Repo
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          rsync -avz ${{ runner.temp }}/data_output/ ./data_output
-          rsync -avz ${{ runner.temp }}/bill_session_mapping ./bill_session_mapping
-          rsync -avz ${{ runner.temp }}/sessions ./sessions
           git config user.email "no_email"
           git config user.name "Windy Civi Bot"
-          git add .
-          git commit -m"Automated report update (report dated ${{ steps.get-date.outputs.date }})"
+          git add data_output bill_session_mapping sessions
+          git commit -m "Automated report update (report dated ${{ steps.get-date.outputs.date }})" || echo "No changes to commit"
           git push
