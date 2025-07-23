@@ -53,25 +53,33 @@ def main(
     DATA_PROCESSED_FOLDER = output_folder / "data_processed"
     DATA_NOT_PROCESSED_FOLDER = output_folder / "data_not_processed"
     EVENT_ARCHIVE_FOLDER = output_folder / "event_archive"
-    EVENT_ARCHIVE_FOLDER.mkdir(parents=True, exist_ok=True)
-    BILL_SESSION_MAPPING_FILE = BASE_FOLDER / "bill_session_mapping" / f"{STATE_ABBR}.json"
+    BILL_SESSION_MAPPING_FILE = (
+        BASE_FOLDER / "bill_session_mapping" / f"{STATE_ABBR}.json"
+    )
     SESSION_MAPPING_FILE = BASE_FOLDER / "sessions" / f"{STATE_ABBR}.json"
     SESSION_LOG_PATH = output_folder / "new_sessions_added.txt"
 
     # 1. Clean previous outputs
     clear_DATA_OUTPUT_FOLDER(output_folder)
 
-    # 2. Ensure state specific session mapping is available
+    # 2. Ensure output folders exist
+    DATA_PROCESSED_FOLDER.mkdir(parents=True, exist_ok=True)
+    DATA_NOT_PROCESSED_FOLDER.mkdir(parents=True, exist_ok=True)
+    EVENT_ARCHIVE_FOLDER.mkdir(parents=True, exist_ok=True)
+    (BILL_SESSION_MAPPING_FILE.parent).mkdir(parents=True, exist_ok=True)
+    (SESSION_MAPPING_FILE.parent).mkdir(parents=True, exist_ok=True)
+
+    # 3. Ensure state specific session mapping is available
     SESSION_MAPPING.update(
         ensure_session_mapping(STATE_ABBR, cache_folder, input_folder)
     )
 
-    # 3. Load and parse all input JSON files
+    # 4. Load and parse all input JSON files
     all_json_files = load_json_files(
         input_folder, EVENT_ARCHIVE_FOLDER, DATA_NOT_PROCESSED_FOLDER
     )
 
-    # 4. Route and process by handler (returns counts)
+    # 5. Route and process by handler (returns counts)
     counts = process_and_save(
         STATE_ABBR,
         all_json_files,
@@ -81,7 +89,7 @@ def main(
         DATA_PROCESSED_FOLDER,
     )
 
-    # 5. Link archived event logs to state sessions and save
+    # 6. Link archived event logs to state sessions and save
     if EVENT_ARCHIVE_FOLDER.exists():
         print("Linking event references to related bills...")
         link_events_to_bills_pipeline(
