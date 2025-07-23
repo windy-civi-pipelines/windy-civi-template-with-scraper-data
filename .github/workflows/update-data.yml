@@ -63,14 +63,16 @@ jobs:
           pip install pipenv
           pipenv install
           pipenv run python main.py --state $STATE --input-folder $FORMATTER_INPUT_FOLDER
-          cd openstates_scraped_data_formatter/data_output/data_processed || exit 1
-          tar zcvf ${{ runner.temp }}/snapshot-${{ steps.get-date.outputs.date }}.tgz country:us
+          cd ${{ github.workspace }} || exit 1
+          tar zcvf ${{ runner.temp }}/snapshot-${{ steps.get-date.outputs.date }}.tgz data_output bill_session_mapping sessions
 
       - name: Update Repo
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          rsync -avz ${{ runner.temp }}/_out/data_processed/ .
+          rsync -avz ${{ runner.temp }}/data_output/ ./data_output
+          rsync -avz ${{ runner.temp }}/bill_session_mapping ./bill_session_mapping
+          rsync -avz ${{ runner.temp }}/sessions ./sessions
           git config user.email "no_email"
           git config user.name "Windy Civi Bot"
           git add .
