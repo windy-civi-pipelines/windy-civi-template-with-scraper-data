@@ -32,6 +32,12 @@ STATE-windy-civi-data-pipeline/
 │       └── update-data.yml         # GitHub Actions pipeline
 ├── formatter/
 │   └── openstates_scraped_data_formatter/   # Formatter for blockchain-style output
+├── bill_session_mapping/          # JSON mapping of bill IDs to sessions
+├── sessions/                      # Session metadata (e.g. dates, labels)
+├── data_output/                   # Formatter output files
+│   ├── data_processed/            # Clean structured output by session and bill
+│   ├── data_not_processed/        # Items that could not be parsed or routed
+│   └── event_archive/             # Raw extracted events saved for post-processing
 ├── Pipfile, Pipfile.lock          # Formatter dependencies
 ├── README.md                      # This file
 ```
@@ -40,11 +46,25 @@ STATE-windy-civi-data-pipeline/
 
 ## 📦 Output Format
 
-Formatted data is saved to `data_processed/`, organized by session and bill. Each folder includes:
+Formatted data is saved to `data_output/data_processed/`, organized by session and bill. Each folder includes:
 
 - `logs/`: timestamped JSONs for bill actions, events, and votes
 - `files/`: placeholder for source documents (if enabled)
-- `snapshot-<timestamp>.tgz`: compressed archive of the full structured output
+- `snapshot-<timestamp>.tgz`: compressed archive of the full structured output (used in past workflows but currently not saved)
+
+Additional folders:
+
+- `data_not_processed/`: Items that could not be fully parsed or matched (e.g. missing session info)
+- `event_archive/`: Extracted events temporarily stored for linking to bill actions
+
+---
+
+## 🔁 Notes on Workflow Behavior
+
+- The `data_output/`, `bill_session_mapping/`, and `sessions/` folders persist in the repo after each run
+- GitHub Actions writes directly to those folders using `rsync`
+- No folders are auto-deleted; only overwritten if files change
+- Session mappings and new session logs are automatically updated
 
 ---
 
