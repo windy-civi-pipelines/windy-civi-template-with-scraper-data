@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 
-def load_session_mapping(session_mapping_file: Path) -> dict:
+def load_session_mapping(SESSION_MAPPING_FILE: Path) -> dict:
     """
     Loads session metadata mapping from disk.
 
@@ -13,12 +13,12 @@ def load_session_mapping(session_mapping_file: Path) -> dict:
         ...
     }
     """
-    if not session_mapping_file.exists():
+    if not SESSION_MAPPING_FILE.exists():
         raise FileNotFoundError(
-            f"❌ Session mapping file not found: {session_mapping_file}"
+            f"❌ Session mapping file not found: {SESSION_MAPPING_FILE}"
         )
 
-    with open(session_mapping_file, "r", encoding="utf-8") as f:
+    with open(SESSION_MAPPING_FILE, "r", encoding="utf-8") as f:
         session_mapping = json.load(f)
 
     if not isinstance(session_mapping, dict):
