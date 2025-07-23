@@ -6,7 +6,7 @@ on:
     - cron: "0 1 * * *" # every day at 1am UTC
 
 env:
-  STATE: ak # <-- update this value per state repo, e.g. il, tx, ny, etc.
+  STATE: al # <-- update this value per state repo, e.g. il, tx, ny, etc.
 
 jobs:
   update-data:
@@ -19,20 +19,13 @@ jobs:
       - name: Get Date
         id: get-date
         run: |
-          echo "date=$(/bin/date +\"%Y%m%dT%H%M%S\")" >> $GITHUB_OUTPUT
+          echo "date=$(/bin/date \"+%Y%m%dT%H%M%S\")" >> $GITHUB_OUTPUT
         shell: bash
 
-      - name: Checkout Main Repo
+      - name: Checkout Repo
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          path: main
-
-      - name: Checkout Formatter Code
-        uses: actions/checkout@v4
-        with:
-          repository: windy-civi/windy-civi-state-template
-          path: formatter
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -49,7 +42,6 @@ jobs:
             cache-scrapes-key-
 
       - name: Scrape Data
-        working-directory: ./main
         run: |
           docker pull openstates/scrapers:28675b011eef5bb35a758d05d1b7313d515c28ea
           mkdir -p ${RUNNER_TEMP}/_working
@@ -59,15 +51,14 @@ jobs:
               openstates/scrapers:28675b011eef5bb35a758d05d1b7313d515c28ea \
               $STATE bills --scrape --fastmode
 
-      - name: Sanitize Data
-        working-directory: ./main
+      - name: Sanitize Data (removes _id and scraped_at)
         run: |
           find ${RUNNER_TEMP}/_working/_data -type f -name "*.json" -exec bash -c 'jq "del(..|._id?, .scraped_at?)" "{}" > "{}.tmp" && mv "{}.tmp" "{}"' \;
 
       - name: Format Data
-        working-directory: ./formatter/openstates_scraped_data_formatter
+        working-directory: ./openstates_scraped_data_formatter
         env:
-          FORMATTER_INPUT_FOLDER: ${{ runner.temp }}/_working/_data/${{ env.STATE }}
+          FORMATTER_INPUT_FOLDER: ${{ runner.temp }}/_working/_data/$STATE
         run: |
           pip install pipenv
           pipenv install
@@ -76,7 +67,6 @@ jobs:
           tar zcvf ${{ runner.temp }}/snapshot-${{ steps.get-date.outputs.date }}.tgz country:us
 
       - name: Update Repo
-        working-directory: ./main
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
