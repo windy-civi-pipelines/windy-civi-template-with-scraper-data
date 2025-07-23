@@ -1,5 +1,4 @@
 name: Update Data
-
 on:
   workflow_dispatch:
 
@@ -17,11 +16,10 @@ jobs:
           echo "date=$(/bin/date \"+%Y%m%dT%H%M%S\")" >> $GITHUB_OUTPUT
         shell: bash
 
-      - name: Checkout Main Repo
+      - name: Checkout Repo
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          path: main
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -37,8 +35,7 @@ jobs:
           restore-keys: |
             cache-scrapes-key-
 
-      - name: Scrape Data (AK)
-        working-directory: ./main
+      - name: Scrape Data
         run: |
           docker pull openstates/scrapers:28675b011eef5bb35a758d05d1b7313d515c28ea
           mkdir -p ${RUNNER_TEMP}/_working
@@ -49,12 +46,11 @@ jobs:
               ak bills --scrape --fastmode
 
       - name: Sanitize Data (removes _id and scraped_at)
-        working-directory: ./main
         run: |
           find ${RUNNER_TEMP}/_working/_data -type f -name "*.json" -exec bash -c 'jq "del(..|._id?, .scraped_at?)" "{}" > "{}.tmp" && mv "{}.tmp" "{}"' \;
 
       - name: Format Data
-        working-directory: ./formatter/openstates_scraped_data_formatter
+        working-directory: ./openstates_scraped_data_formatter
         env:
           FORMATTER_INPUT_FOLDER: ${{ runner.temp }}/_working/_data/ak
         run: |
@@ -65,7 +61,6 @@ jobs:
           tar zcvf ${{ runner.temp }}/snapshot-${{ steps.get-date.outputs.date }}.tgz country:us
 
       - name: Update Repo
-        working-directory: ./main
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
