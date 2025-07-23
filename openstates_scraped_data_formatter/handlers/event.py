@@ -13,8 +13,8 @@ def handle_event(
     content,
     session_name,
     date_folder,
-    output_folder,
-    error_folder,
+    DATA_PROCESSED_FOLDER,
+    DATA_NOT_PROCESSED_FOLDER,
     filename,
     referenced_bill_id,
 ):
@@ -27,7 +27,7 @@ def handle_event(
     if not start_date:
         print(f"⚠️ Event {event_id} missing start_date")
         record_error_file(
-            error_folder,
+            DATA_NOT_PROCESSED_FOLDER,
             "from_handle_event_missing_start_date",
             filename,
             content,
@@ -40,7 +40,7 @@ def handle_event(
         if not referenced_bill_id:
             print("⚠️ Warning: Event missing bill_identifier")
             record_error_file(
-                error_folder,
+                DATA_NOT_PROCESSED_FOLDER,
                 "from_handle_event_missing_bill_identifier",
                 filename,
                 content,
@@ -52,7 +52,7 @@ def handle_event(
     event_name = content.get("name", "event")
     short_name = clean_event_name(event_name)
 
-    base_path = Path(output_folder).joinpath(
+    base_path = Path(DATA_PROCESSED_FOLDER).joinpath(
         f"country:us",
         f"state:{STATE_ABBR}",
         "sessions",
