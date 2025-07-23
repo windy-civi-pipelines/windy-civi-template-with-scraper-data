@@ -1,39 +1,14 @@
 # Byte-compiled / optimized / DLL files
-openstates_scraped_data_formatter/__pycache__/
-openstates_scraped_data_formatter/*.py[cod]
-openstates_scraped_data_formatter/*.pyo
+__pycache__/
+*.py[cod]
+*.pyo
 
 # Virtual environments
 .venv/
 env/
 venv/
 
-# Formatter data & temp folders
-openstates_scraped_data_formatter/_data/*
-openstates_scraped_data_formatter/data_output/data_processed/*
-openstates_scraped_data_formatter/data_output/data_not_processed/*
-openstates_scraped_data_formatter/event_archive/
-openstates_scraped_data_formatter/new_sessions_added.txt
-
-# Create folders for processed and not processed data
-!openstates_scraped_data_formatter/_data/.gitkeep
-!openstates_scraped_data_formatter/data_output/data_processed/.gitkeep
-!openstates_scraped_data_formatter/data_output/data_not_processed/.gitkeep
-
 # OS / Editor files
 .DS_Store
 .idea/
 .vscode/
-
-# Python cache or history
-openstates_scraped_data_formatter/*.pyc
-openstates_scraped_data_formatter/*.pkl
-openstates_scraped_data_formatter/*.sqlite
-openstates_scraped_data_formatter/.history
-
-# Jupyter notebook checkpoints
-openstates_scraped_data_formatter/.ipynb_checkpoints/
-
-# Archives or temp files
-openstates_scraped_data_formatter/*.zip
-openstates_scraped_data_formatter/*.tmp
