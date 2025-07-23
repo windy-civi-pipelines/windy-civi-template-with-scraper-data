@@ -10,7 +10,6 @@ venv/
 
 # Formatter data & temp folders
 openstates_scraped_data_formatter/_data/*
-openstates_scraped_data_formatter/data_output/*
 openstates_scraped_data_formatter/data_output/data_processed/*
 openstates_scraped_data_formatter/data_output/data_not_processed/*
 openstates_scraped_data_formatter/event_archive/
@@ -18,7 +17,6 @@ openstates_scraped_data_formatter/new_sessions_added.txt
 
 # Create folders for processed and not processed data
 !openstates_scraped_data_formatter/_data/.gitkeep
-!openstates_scraped_data_formatter/data_output/.gitkeep
 !openstates_scraped_data_formatter/data_output/data_processed/.gitkeep
 !openstates_scraped_data_formatter/data_output/data_not_processed/.gitkeep
 
