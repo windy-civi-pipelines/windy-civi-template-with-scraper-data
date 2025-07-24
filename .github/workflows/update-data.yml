@@ -65,12 +65,17 @@ jobs:
           pipenv run python main.py --state $STATE --input-folder $FORMATTER_INPUT_FOLDER
           cd ${{ github.workspace }} || exit 1
 
+      - name: Copy Scraped Data to Repo
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/_data/$STATE"
+          cp -r "${RUNNER_TEMP}/_working/_data/$STATE"/* "$GITHUB_WORKSPACE/_data/$STATE/"
+
       - name: Update Repo
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.email "no_email"
           git config user.name "Windy Civi Bot"
-          git add data_output bill_session_mapping sessions
+          git add _data data_output bill_session_mapping sessions
           git commit -m "Automated report update (report dated ${{ steps.get-date.outputs.date }})" || echo "No changes to commit"
           git push
