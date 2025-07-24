@@ -5,11 +5,10 @@ from urllib import request
 from urllib.parse import urlparse
 from utils.file_utils import format_timestamp, record_error_file, write_action_logs
 from utils.download_pdf import download_bill_pdf
+from utils import timestamp_tracker
 from utils.timestamp_tracker import (
     read_latest_timestamp,
     to_dt_obj,
-    write_latest_timestamp,
-    LATEST_TIMESTAMP_PATH,
 )
 
 LATEST_TIMESTAMP = to_dt_obj(read_latest_timestamp())
@@ -41,6 +40,7 @@ def handle_bill(
     # Optional: Download linked PDF files (⚠️ very slow).
     # Default is OFF to preserve performance.
     DOWNLOAD_PDFS = False
+    global LATEST_TIMESTAMP
 
     bill_identifier = content.get("identifier")
     if not bill_identifier:
@@ -73,10 +73,20 @@ def handle_bill(
     if actions:
         dates = [a.get("date") for a in actions if a.get("date")]
         timestamp = format_timestamp(sorted(dates)[0]) if dates else None
+        print(f"Processing bill {bill_identifier} with timestamp {timestamp}")
         if timestamp and timestamp != "unknown":
             current_dt = to_dt_obj(timestamp)
-            if current_dt and (not LATEST_TIMESTAMP or current_dt > LATEST_TIMESTAMP):
-                LATEST_TIMESTAMP = current_dt
+            if current_dt:
+                print(f"PROCESSING BILL {bill_identifier} with timestamp {timestamp}")
+            else:
+                print(
+                    f"⚠️ Invalid timestamp format for bill {bill_identifier}: {timestamp}"
+                )
+            if current_dt and (
+                not timestamp_tracker.LATEST_TIMESTAMP
+                or current_dt > timestamp_tracker.LATEST_TIMESTAMP
+            ):
+                timestamp_tracker.LATEST_TIMESTAMP = current_dt
                 print(f"Updating latest timestamp to {LATEST_TIMESTAMP}")
     else:
         timestamp = None
@@ -90,7 +100,6 @@ def handle_bill(
     output_file = save_path.joinpath("logs", full_filename)
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(content, f, indent=2)
-    # print(f"✅ Saved bill {bill_identifier}")
 
     # Save each action as a separate file
     if actions:
@@ -101,9 +110,3 @@ def handle_bill(
         download_bill_pdf(content, save_path, bill_identifier)
 
     return True
-
-
-if LATEST_TIMESTAMP:
-    write_latest_timestamp(
-        LATEST_TIMESTAMP_PATH, LATEST_TIMESTAMP.strftime("%Y%m%dT%H%M%S")
-    )
