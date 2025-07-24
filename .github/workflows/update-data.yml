@@ -58,7 +58,7 @@ jobs:
       - name: Format Data
         working-directory: ./openstates_scraped_data_formatter
         env:
-          FORMATTER_INPUT_FOLDER: ${{ runner.temp }}/_working/_data/$STATE
+          FORMATTER_INPUT_FOLDER: ${{ github.workspace }}/_data/$STATE
         run: |
           pip install pipenv
           pipenv install
