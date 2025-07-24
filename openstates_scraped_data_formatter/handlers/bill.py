@@ -4,35 +4,15 @@ import re
 from urllib import request
 from urllib.parse import urlparse
 from utils.file_utils import format_timestamp, record_error_file, write_action_logs
+from utils.download_pdf import download_bill_pdf
+from utils.timestamp_tracker import (
+    read_latest_timestamp,
+    to_dt_obj,
+    write_latest_timestamp,
+    LATEST_TIMESTAMP_PATH,
+)
 
-
-def download_bill_pdf(content, save_path, bill_identifier):
-    versions = content.get("versions", [])
-    if not versions:
-        print("⚠️ No versions found for bill")
-        return
-
-    files_dir = save_path / "files"
-    files_dir.mkdir(parents=True, exist_ok=True)
-
-    for version in versions:
-        for link in version.get("links", []):
-            url = link.get("url")
-            if url and url.endswith(".pdf"):
-                try:
-                    response = request.get(url, timeout=10)
-                    if response.status_code == 200:
-                        filename = f"{bill_identifier}.pdf"
-                        file_path = files_dir / filename
-                        with open(file_path, "wb") as f:
-                            f.write(response.content)
-                        print(f"📄 Downloaded PDF: {filename}")
-                    else:
-                        print(
-                            f"⚠️ Failed to download PDF: {url} (status {response.status_code})"
-                        )
-                except Exception as e:
-                    print(f"❌ Error downloading PDF: {url} ({e})")
+LATEST_TIMESTAMP = to_dt_obj(read_latest_timestamp())
 
 
 def handle_bill(
@@ -94,6 +74,11 @@ def handle_bill(
         timestamp = format_timestamp(sorted(dates)[0]) if dates else None
     else:
         timestamp = None
+        if timestamp and timestamp != "unknown":
+            current_dt = to_dt_obj(timestamp)
+            if current_dt and (not LATEST_TIMESTAMP or current_dt > LATEST_TIMESTAMP):
+                LATEST_TIMESTAMP = current_dt
+                print(f"Updating latest timestamp to {LATEST_TIMESTAMP}")
 
     if not timestamp:
         print(f"⚠️ Warning: Bill {bill_identifier} missing action dates")
@@ -115,3 +100,9 @@ def handle_bill(
         download_bill_pdf(content, save_path, bill_identifier)
 
     return True
+
+
+if LATEST_TIMESTAMP:
+    write_latest_timestamp(
+        LATEST_TIMESTAMP_PATH, LATEST_TIMESTAMP.strftime("%Y%m%dT%H%M%S")
+    )
