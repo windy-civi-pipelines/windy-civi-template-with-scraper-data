@@ -131,8 +131,7 @@ def process_and_save(
 
     if timestamp_tracker.LATEST_TIMESTAMP:
         write_latest_timestamp(
-            LATEST_TIMESTAMP_PATH,
-            timestamp_tracker.LATEST_TIMESTAMP.strftime("%Y%m%dT%H%M%S"),
+            timestamp_tracker.LATEST_TIMESTAMP.strftime("%Y%m%dT%H%M%S")
         )
     print(f"📝 Updated latest timestamp file: {timestamp_tracker.LATEST_TIMESTAMP}")
     print("\n✅ File processing complete.")
