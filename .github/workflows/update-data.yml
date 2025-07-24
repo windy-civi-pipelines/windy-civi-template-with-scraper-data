@@ -74,6 +74,6 @@ jobs:
           git config user.name "Windy Civi Bot"
           ls -l data_output/latest_timestamp_seen.txt
           cat data_output/latest_timestamp_seen.txt
-          git add data_output bill_session_mapping sessions
+          git add data_output bill_session_mapping sessions _data/$STATE
           git commit -m "Automated report update (report dated ${{ steps.get-date.outputs.date }})" || echo "No changes to commit"
           git push
