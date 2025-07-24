@@ -59,7 +59,7 @@ jobs:
         working-directory: ./openstates_scraped_data_formatter
         env:
           FORMATTER_INPUT_FOLDER: ${{ github.workspace }}/_data/${{ env.STATE }}
-          SCRAPER_TEMP_DATA: ${{ runner.temp }}/_data/${{ env.STATE }}
+          SCRAPER_TEMP_DATA: $${{ runner.temp }}/_working/_data/${{ env.STATE }}
         run: |
           mkdir -p $FORMATTER_INPUT_FOLDER
           cp -r $SCRAPER_TEMP_DATA/* $FORMATTER_INPUT_FOLDER
