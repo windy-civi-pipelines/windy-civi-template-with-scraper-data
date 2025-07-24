@@ -58,34 +58,19 @@ jobs:
       - name: Format Data
         working-directory: ./openstates_scraped_data_formatter
         env:
-          FORMATTER_INPUT_FOLDER: ${{ github.workspace }}/_data/${{ env.STATE }}
-          SCRAPER_TEMP_DATA: ${{ runner.temp }}/_working/_data/$STATE
-          POSSIBLE_OTHER: $${{ runner.temp }}/_data/${{ env.STATE }}
+          FORMATTER_INPUT_FOLDER: ${{ runner.temp }}/_working/_data/$STATE
         run: |
-          mkdir -p $FORMATTER_INPUT_FOLDER
-          echo "Checking for folders existance"
-          echo "FORMATTER_INPUT_FOLDER"
-          ls -la "$FORMATTER_INPUT_FOLDER" || echo "❌ FORMATTER_INPUT_FOLDER not found"
-          echo "SCRAPER_TEMP_DATA"
-          ls -la "$SCRAPER_TEMP_DATA" || echo "❌ SCRAPER_TEMP_DATA not found"
-          echo "POSSIBLE_OTHER"
-          ls -la "$POSSIBLE_OTHER" || echo "❌ POSSIBLE_OTHER not found"
-          
-          cp -r $SCRAPER_TEMP_DATA/* $FORMATTER_INPUT_FOLDER
           pip install pipenv
           pipenv install
           pipenv run python main.py --state $STATE --input-folder $FORMATTER_INPUT_FOLDER
           cd ${{ github.workspace }} || exit 1
 
       - name: Update Repo
-        working-directory: ${{ github.workspace }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.email "no_email"
           git config user.name "Windy Civi Bot"
-          ls -l data_output/latest_timestamp_seen.txt
-          cat data_output/latest_timestamp_seen.txt
-          git add data_output bill_session_mapping sessions _data/$STATE
+          git add data_output bill_session_mapping sessions
           git commit -m "Automated report update (report dated ${{ steps.get-date.outputs.date }})" || echo "No changes to commit"
           git push
