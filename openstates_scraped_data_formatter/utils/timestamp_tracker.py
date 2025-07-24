@@ -26,3 +26,6 @@ def write_latest_timestamp(path, timestamp):
         print(f"📝 Updated latest timestamp file: {timestamp}")
     except Exception as e:
         print(f"❌ Failed to write latest timestamp: {e}")
+
+
+LATEST_TIMESTAMP = to_dt_obj(read_latest_timestamp())
