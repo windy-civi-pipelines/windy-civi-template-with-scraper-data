@@ -13,6 +13,7 @@ from utils.timestamp_tracker import (
 )
 
 LATEST_TIMESTAMP = to_dt_obj(read_latest_timestamp())
+print(f"Current latest timestamp: {LATEST_TIMESTAMP}")
 
 
 def handle_bill(
@@ -72,13 +73,13 @@ def handle_bill(
     if actions:
         dates = [a.get("date") for a in actions if a.get("date")]
         timestamp = format_timestamp(sorted(dates)[0]) if dates else None
-    else:
-        timestamp = None
         if timestamp and timestamp != "unknown":
             current_dt = to_dt_obj(timestamp)
             if current_dt and (not LATEST_TIMESTAMP or current_dt > LATEST_TIMESTAMP):
                 LATEST_TIMESTAMP = current_dt
                 print(f"Updating latest timestamp to {LATEST_TIMESTAMP}")
+    else:
+        timestamp = None
 
     if not timestamp:
         print(f"⚠️ Warning: Bill {bill_identifier} missing action dates")
@@ -89,7 +90,7 @@ def handle_bill(
     output_file = save_path.joinpath("logs", full_filename)
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(content, f, indent=2)
-    print(f"✅ Saved bill {bill_identifier}")
+    # print(f"✅ Saved bill {bill_identifier}")
 
     # Save each action as a separate file
     if actions:
