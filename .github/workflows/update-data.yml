@@ -67,7 +67,7 @@ jobs:
 
           # ✅ Print latest timestamp file (if it exists)
           echo "📦 Formatter complete. Checking latest timestamp file..."
-          if [ -f ../data_output/latest_timestamp_seen.txt ]; then
+          if [ -f ../../data_output/latest_timestamp_seen.txt ]; then
             echo "✅ Found latest_timestamp_seen.txt:"
             cat ../data_output/latest_timestamp_seen.txt
           else
