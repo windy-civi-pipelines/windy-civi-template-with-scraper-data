@@ -1,8 +1,14 @@
 import click
-
 from handlers import bill, vote_event, event
 from utils.file_utils import record_error_file
 from utils.interactive import prompt_for_session_fix
+from utils import timestamp_tracker
+from utils.timestamp_tracker import (
+    read_latest_timestamp,
+    to_dt_obj,
+    write_latest_timestamp,
+    LATEST_TIMESTAMP_PATH,
+)
 
 
 def count_successful_saves(files, handler_function):
@@ -123,6 +129,12 @@ def process_and_save(
         elif result == "vote_event":
             vote_event_count += 1
 
+    if timestamp_tracker.LATEST_TIMESTAMP:
+        write_latest_timestamp(
+            LATEST_TIMESTAMP_PATH,
+            timestamp_tracker.LATEST_TIMESTAMP.strftime("%Y%m%dT%H%M%S"),
+        )
+    print(f"📝 Updated latest timestamp file: {timestamp_tracker.LATEST_TIMESTAMP}")
     print("\n✅ File processing complete.")
 
     return {
