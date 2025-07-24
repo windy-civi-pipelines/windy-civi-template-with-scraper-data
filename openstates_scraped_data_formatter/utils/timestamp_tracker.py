@@ -26,6 +26,11 @@ def write_latest_timestamp(timestamp):
         Path(LATEST_TIMESTAMP_PATH).write_text(timestamp)
         print(f"📝 Updated latest timestamp path: {LATEST_TIMESTAMP_PATH}")
         print(f"📝 Updated latest timestamp file: {timestamp}")
+
+        # ✅ Print file contents to confirm
+        print("📄 File contents:")
+        print(Path(LATEST_TIMESTAMP_PATH).read_text())
+
     except Exception as e:
         print(f"❌ Failed to write latest timestamp: {e}")
 
