@@ -66,6 +66,7 @@ jobs:
           cd ${{ github.workspace }} || exit 1
 
       - name: Update Repo
+        working-directory: ${{ github.workspace }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
