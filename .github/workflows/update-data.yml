@@ -60,6 +60,7 @@ jobs:
         env:
           FORMATTER_INPUT_FOLDER: ${{ github.workspace }}/_data/$STATE
         run: |
+          mkdir -p $FORMATTER_INPUT_FOLDER
           pip install pipenv
           pipenv install
           pipenv run python main.py --state $STATE --input-folder $FORMATTER_INPUT_FOLDER
