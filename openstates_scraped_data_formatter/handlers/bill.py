@@ -76,12 +76,6 @@ def handle_bill(
         print(f"Processing bill {bill_identifier} with timestamp {timestamp}")
         if timestamp and timestamp != "unknown":
             current_dt = to_dt_obj(timestamp)
-            if current_dt:
-                print(f"PROCESSING BILL {bill_identifier} with timestamp {timestamp}")
-            else:
-                print(
-                    f"⚠️ Invalid timestamp format for bill {bill_identifier}: {timestamp}"
-                )
             if current_dt and (
                 not timestamp_tracker.LATEST_TIMESTAMP
                 or current_dt > timestamp_tracker.LATEST_TIMESTAMP
