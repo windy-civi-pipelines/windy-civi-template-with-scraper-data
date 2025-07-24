@@ -14,6 +14,7 @@ def read_latest_timestamp():
 
 def to_dt_obj(ts_str):
     try:
+        ts_str = ts_str.rstrip("Z")
         return datetime.strptime(ts_str, "%Y%m%dT%H%M%S")
     except Exception:
         return None
