@@ -58,7 +58,6 @@ def main(
     (SESSION_MAPPING_FILE.parent).mkdir(parents=True, exist_ok=True)
 
     # 3. Ensure state specific session mapping is available
-
     SESSION_MAPPING.update(
         ensure_session_mapping(STATE_ABBR, BASE_FOLDER, input_folder)
     )
