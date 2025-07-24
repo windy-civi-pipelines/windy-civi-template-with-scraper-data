@@ -59,7 +59,7 @@ jobs:
         working-directory: ./openstates_scraped_data_formatter
         env:
           FORMATTER_INPUT_FOLDER: ${{ github.workspace }}/_data/${{ env.STATE }}
-          SCRAPER_TEMP_DATA: $${{ runner.temp }}/_working/_data/${{ env.STATE }}
+          SCRAPER_TEMP_DATA: ${{ runner.temp }}/_working/_data/$STATE
           POSSIBLE_OTHER: $${{ runner.temp }}/_data/${{ env.STATE }}
         run: |
           mkdir -p $FORMATTER_INPUT_FOLDER
@@ -69,7 +69,7 @@ jobs:
           echo "SCRAPER_TEMP_DATA"
           ls -la "$SCRAPER_TEMP_DATA" || echo "❌ SCRAPER_TEMP_DATA not found"
           echo "POSSIBLE_OTHER"
-          ls -la "$SPOSSIBLE_OTHER" || echo "❌ POSSIBLE_OTHER not found"
+          ls -la "$POSSIBLE_OTHER" || echo "❌ POSSIBLE_OTHER not found"
           
           cp -r $SCRAPER_TEMP_DATA/* $FORMATTER_INPUT_FOLDER
           pip install pipenv
