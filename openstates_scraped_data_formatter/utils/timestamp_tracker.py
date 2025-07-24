@@ -22,6 +22,7 @@ def to_dt_obj(ts_str):
 
 def write_latest_timestamp(path, timestamp):
     try:
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
         Path(path).write_text(timestamp)
         print(f"📝 Updated latest timestamp file: {timestamp}")
     except Exception as e:
