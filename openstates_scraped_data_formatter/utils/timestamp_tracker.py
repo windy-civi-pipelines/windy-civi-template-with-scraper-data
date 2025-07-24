@@ -2,7 +2,9 @@ from pathlib import Path
 from datetime import datetime
 import json
 
-LATEST_TIMESTAMP_PATH = Path("data_output/latest_timestamp_seen.txt")
+LATEST_TIMESTAMP_PATH = (
+    Path(__file__).resolve().parents[2] / "data_output/latest_timestamp_seen.txt"
+)
 
 
 def read_latest_timestamp():
