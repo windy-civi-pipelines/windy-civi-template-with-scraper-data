@@ -63,6 +63,17 @@ jobs:
           pip install pipenv
           pipenv install
           pipenv run python main.py --state $STATE --input-folder $FORMATTER_INPUT_FOLDER
+
+
+          # ✅ Print latest timestamp file (if it exists)
+          echo "📦 Formatter complete. Checking latest timestamp file..."
+          if [ -f ../data_output/latest_timestamp_seen.txt ]; then
+            echo "✅ Found latest_timestamp_seen.txt:"
+            cat ../data_output/latest_timestamp_seen.txt
+          else
+            echo "❌ latest_timestamp_seen.txt not found in expected location."
+          fi
+
           cd ${{ github.workspace }} || exit 1
 
       - name: Update Repo
